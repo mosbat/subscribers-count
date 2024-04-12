@@ -18,7 +18,7 @@ jobs:
         run: |
           API_DATA=$(curl -s "https://www.udemy.com/api-2.0/courses/4460762/?fields%5Bcourse%5D=num_subscribers")
           echo "API Data: $API_DATA"
-          CSV_DATA=$(echo "$API_DATA" | jq -r '.num_subscribers')
+          CSV_DATA=$(echo "$API_DATA" | jq -r '[{"subscribers": .num_subscribers}] | (.[0] | keys_unsorted) as $keys | $keys, map([.[ $keys[] ]])[] | @csv')
           echo "CSV Data: $CSV_DATA"
           echo "$CSV_DATA" > api_data.csv
 
