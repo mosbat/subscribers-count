@@ -1,0 +1,29 @@
+name: Update File with API Data
+
+on:
+  schedule:
+    - cron: '*/5 * * * *' # Runs every 2 minutes
+  push:
+    branches:
+      - main
+
+jobs:
+  update-file:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Fetch Data from API
+        run: |
+          API_DATA=$(curl -s https://www.udemy.com/api-2.0/courses/4460762/?fields[course]=num_subscribers)
+                    # Transform data into CSV format (replace this with your transformation logic)
+          CSV_DATA=$(echo "$API_DATA" | jq -r '.[] | [.field1, .field2] | @csv')
+          echo "$CSV_DATA" > api_data.csv
+
+      - name: Commit and Push Changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Update data from API"
+          commit_user_name: "GitHub Actions"
+          commit_user_email: "actions@github.com"
