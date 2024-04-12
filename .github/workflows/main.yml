@@ -2,7 +2,7 @@ name: Update File with API Data
 
 on:
   schedule:
-    - cron: '*/5 * * * *' # Runs every 2 minutes
+    - cron: '*/5 * * * *' # Runs every 5 minutes
   push:
     branches:
       - main
@@ -17,8 +17,9 @@ jobs:
       - name: Fetch Data from API
         run: |
           API_DATA=$(curl -s https://www.udemy.com/api-2.0/courses/4460762/?fields[course]=num_subscribers)
-                    # Transform data into CSV format (replace this with your transformation logic)
-          CSV_DATA=$(echo "$API_DATA" | jq -r '.[] | [.field1, .field2] | @csv')
+          echo "API Data: $API_DATA"
+          CSV_DATA=$(echo "$API_DATA" | jq -r '.num_subscribers')
+          echo "CSV Data: $CSV_DATA"
           echo "$CSV_DATA" > api_data.csv
 
       - name: Commit and Push Changes
